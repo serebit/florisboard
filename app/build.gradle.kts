@@ -1,7 +1,7 @@
 plugins {
-    id("com.android.application") version "4.1.1"
-    kotlin("android") version "1.4.10"
-    kotlin("android.extensions") version "1.4.10"
+    id("com.android.application") version "4.1.2"
+    kotlin("android") version "1.4.30"
+    kotlin("android.extensions") version "1.4.30"
 }
 
 android {
@@ -15,6 +15,7 @@ android {
 
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
+        freeCompilerArgs = listOf("-Xallow-result-return-type") // enables use of kotlin.Result
     }
 
     defaultConfig {
@@ -52,28 +53,24 @@ android {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin", "kotlin-stdlib-jdk7")
-    implementation("org.jetbrains.kotlin", "kotlin-reflect")
     implementation("androidx.appcompat", "appcompat", "1.2.0")
     implementation("androidx.core", "core-ktx", "1.3.2")
     implementation("androidx.preference", "preference-ktx", "1.1.1")
     implementation("androidx.constraintlayout", "constraintlayout", "2.0.4")
-    implementation("com.google.android", "flexbox", "2.0.1")
-    implementation("com.squareup.moshi", "moshi-kotlin", "1.9.2")
-    implementation("com.squareup.moshi", "moshi-adapters", "1.9.2")
-    implementation("com.google.android.material", "material", "1.2.1")
-    implementation("org.jetbrains.kotlinx", "kotlinx-coroutines-core", "1.3.7")
-    implementation("org.jetbrains.kotlinx", "kotlinx-coroutines-android", "1.3.7")
+    implementation("com.google.android", "flexbox", "2.0.1") // requires jcenter
+    implementation("com.squareup.moshi", "moshi-kotlin", "1.11.0")
+    implementation("com.squareup.moshi", "moshi-adapters", "1.11.0")
+    implementation("com.google.android.material", "material", "1.3.0")
+    implementation("org.jetbrains.kotlinx", "kotlinx-coroutines-android", "1.4.2")
     implementation("com.jaredrummler", "colorpicker", "1.1.0")
     implementation("com.jakewharton.timber", "timber", "4.7.1")
-    implementation("com.michael-bull.kotlin-result", "kotlin-result", "1.1.9")
+    implementation("com.michael-bull.kotlin-result", "kotlin-result", "1.1.10")
     implementation("com.nambimobile.widgets", "expandable-fab", "1.0.2")
 
-    testImplementation("junit", "junit", "4.12")
-    testImplementation("androidx.test", "core", "1.3.0")
+    testImplementation("junit", "junit", "4.13.1")
     testImplementation("org.mockito", "mockito-core", "1.10.19")
     testImplementation("org.mockito", "mockito-inline", "2.13.0")
-    testImplementation("org.robolectric", "robolectric", "4.4")
+    testImplementation("org.robolectric", "robolectric", "4.5.1")
     androidTestImplementation("androidx.test.ext", "junit", "1.1.2")
     androidTestImplementation("androidx.test.espresso", "espresso-core", "3.3.0")
 }
