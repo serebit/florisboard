@@ -16,6 +16,9 @@
 
 package dev.patrickgold.florisboard.ime.extension
 
+import com.github.michaelbull.result.Err
+import com.github.michaelbull.result.Ok
+import com.github.michaelbull.result.Result
 import java.util.*
 
 /**
@@ -49,16 +52,16 @@ sealed class AssetSource {
     companion object {
         private val externalRegex: Regex = """^external\\(([a-z]+\\.)*[a-z]+\\)\$""".toRegex()
 
-        fun fromString(str: String): Result<AssetSource> {
+        fun fromString(str: String): Result<AssetSource, String> {
             return when (val string = str.toLowerCase(Locale.ENGLISH)) {
-                "assets" -> Result.success(Assets)
-                "internal" -> Result.success(Internal)
+                "assets" -> Ok(Assets)
+                "internal" -> Ok(Internal)
                 else -> {
                     if (string.matches(externalRegex)) {
                         val packageName = string.substring(9, string.length - 1)
-                        Result.success(External(packageName))
+                        Ok(External(packageName))
                     } else {
-                        Result.failure(Error("'$str' is not a valid AssetSource."))
+                        Err("'$str' is not a valid AssetSource.")
                     }
                 }
             }

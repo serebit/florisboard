@@ -28,6 +28,9 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.forEach
+import com.github.michaelbull.result.getOr
+import com.github.michaelbull.result.onFailure
+import com.github.michaelbull.result.onSuccess
 import dev.patrickgold.florisboard.R
 import dev.patrickgold.florisboard.databinding.ThemeManagerActivityBinding
 import dev.patrickgold.florisboard.ime.core.PrefHelper
@@ -129,7 +132,7 @@ class ThemeManagerActivity : AppCompatActivity() {
                     PrefHelper.Theme.NIGHT_THEME_REF -> prefs.theme.nightThemeRef
                     else -> ""
                 }
-            ).getOrNull()
+            ).getOr(null)
         }
     }
 

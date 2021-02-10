@@ -16,6 +16,11 @@
 
 package dev.patrickgold.florisboard.ime.extension
 
+import com.github.michaelbull.result.Err
+import com.github.michaelbull.result.Ok
+import com.github.michaelbull.result.Result
+import com.github.michaelbull.result.getOrElse
+
 /**
  * Data class which is a reference to an asset file. It indicates in which storage medium the asset
  * is as well as the relative path to it.
@@ -31,15 +36,15 @@ data class AssetRef(
     companion object {
         private const val DELIMITER: String = ":"
 
-        fun fromString(str: String): Result<AssetRef> {
+        fun fromString(str: String): Result<AssetRef, String> {
             val items = str.split(DELIMITER)
             if (items.size != 2) {
-                return Result.failure(Error("Unexpected length of given asset ref. Make sure that the asset ref string contains exactly 2 items separated by '$DELIMITER'!"))
+                return Err("Unexpected length of given asset ref. Make sure that the asset ref string contains exactly 2 items separated by '$DELIMITER'!")
             }
             val retSource = AssetSource.fromString(items[0]).getOrElse {
-                return Result.failure(Error(it))
+                return Err(it)
             }
-            return Result.success(AssetRef(retSource, items[1]))
+            return Ok(AssetRef(retSource, items[1]))
         }
     }
 

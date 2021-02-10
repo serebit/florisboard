@@ -17,11 +17,15 @@
 package dev.patrickgold.florisboard.ime.extension
 
 import android.content.Context
+import com.github.michaelbull.result.*
 import com.squareup.moshi.Moshi
+import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import dev.patrickgold.florisboard.ime.popup.PopupExtension
 import dev.patrickgold.florisboard.ime.text.key.KeyTypeAdapter
 import dev.patrickgold.florisboard.ime.text.key.KeyVariationAdapter
 import dev.patrickgold.florisboard.ime.text.layout.LayoutTypeAdapter
+import dev.patrickgold.florisboard.ime.theme.Theme
 import timber.log.Timber
 import java.io.File
 
@@ -58,22 +62,22 @@ class AssetManager private constructor(private val applicationContext: Context) 
         }
     }
 
-    fun deleteAsset(ref: AssetRef): Result<Nothing?> {
+    fun deleteAsset(ref: AssetRef): Result<Nothing?, Throwable> {
         return when (ref.source) {
             AssetSource.Internal -> {
                 val file = File(applicationContext.filesDir.absolutePath + "/" + ref.path)
                 if (file.isFile) {
                     val success = file.delete()
                     if (success) {
-                        Result.success(null)
+                        Ok(null)
                     } else {
-                        Result.failure(Exception("Could not delete file."))
+                        Err(Exception("Could not delete file."))
                     }
                 } else {
-                    Result.failure(Exception("Provided reference is not a file."))
+                    Err(Exception("Provided reference is not a file."))
                 }
             }
-            else -> Result.failure(Exception("Can not delete an asset in source '${ref.source}'"))
+            else -> Err(Exception("Can not delete an asset in source '${ref.source}'"))
         }
     }
 
@@ -96,7 +100,7 @@ class AssetManager private constructor(private val applicationContext: Context) 
         }
     }
 
-    fun <T : Asset> listAssets(ref: AssetRef, assetClass: Class<T>): Result<Map<AssetRef, T>> {
+    fun <T: Asset> listAssets(ref: AssetRef, assetClass: Class<T>): Result<Map<AssetRef, T>, Throwable> {
         val retMap = mutableMapOf<AssetRef, T>()
         return when (ref.source) {
             AssetSource.Assets -> {
@@ -113,9 +117,9 @@ class AssetManager private constructor(private val applicationContext: Context) 
                             }
                         }
                     }
-                    Result.success(retMap.toMap())
+                    Ok(retMap.toMap())
                 } catch (e: Exception) {
-                    Result.failure(e)
+                    Err(e)
                 }
             }
             AssetSource.Internal -> {
@@ -135,19 +139,19 @@ class AssetManager private constructor(private val applicationContext: Context) 
                         }
                     }
                 }
-                Result.success(retMap.toMap())
+                Ok(retMap.toMap())
             }
-            else -> Result.success(retMap.toMap())
+            else -> Ok(retMap.toMap())
         }
     }
 
-    fun <T : Asset> loadAsset(ref: AssetRef, assetClass: Class<T>): Result<T> {
+    fun <T: Asset> loadAsset(ref: AssetRef, assetClass: Class<T>): Result<T, Throwable> {
         val rawJsonData = when (ref.source) {
             is AssetSource.Assets -> {
                 try {
                     applicationContext.assets.open(ref.path).bufferedReader().use { it.readText() }
                 } catch (e: Exception) {
-                    return Result.failure(e)
+                    return Err(e)
                 }
             }
             is AssetSource.Internal -> {
@@ -165,25 +169,25 @@ class AssetManager private constructor(private val applicationContext: Context) 
             val adapter = moshi.adapter(assetClass)
             val asset = adapter.fromJson(rawJsonData)
             if (asset != null) {
-                Result.success(asset)
+                Ok(asset)
             } else {
-                Result.failure(NullPointerException("Asset failed to load!"))
+                Err(NullPointerException("Asset failed to load!"))
             }
         } catch (e: Exception) {
-            Result.failure(e)
+            Err(e)
         }
     }
 
-    fun <T : Asset> writeAsset(ref: AssetRef, assetClass: Class<T>, asset: T): Result<Boolean> {
+    fun <T: Asset> writeAsset(ref: AssetRef, assetClass: Class<T>, asset: T): Result<Boolean, Throwable> {
         return when (ref.source) {
             AssetSource.Internal -> {
                 val adapter = moshi.adapter(assetClass)
                 val rawJson = adapter.toJson(asset)
                 val file = File(applicationContext.filesDir.absolutePath + "/" + ref.path)
                 writeToFile(file, rawJson)
-                Result.success(true)
+                Ok(true)
             }
-            else -> Result.failure(Exception("Can not write an asset in source '${ref.source}'"))
+            else -> Err(Exception("Can not write an asset in source '${ref.source}'"))
         }
     }
 
