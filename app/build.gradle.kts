@@ -38,7 +38,6 @@ android {
         }
 
         named("release").configure {
-            isMinifyEnabled = false
             proguardFiles.add(getDefaultProguardFile("proguard-android-optimize.txt"))
             resValue("string", "floris_app_name", "@string/app_name")
         }
@@ -48,6 +47,10 @@ android {
         unitTests {
             isIncludeAndroidResources = true
         }
+    }
+
+    lintOptions {
+        isAbortOnError = false
     }
 }
 
