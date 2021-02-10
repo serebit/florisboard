@@ -67,8 +67,7 @@ dependencies {
     implementation("com.nambimobile.widgets", "expandable-fab", "1.0.2")
 
     testImplementation("junit", "junit", "4.13.1")
-    testImplementation("org.mockito", "mockito-core", "1.10.19")
-    testImplementation("org.mockito", "mockito-inline", "2.13.0")
+    testImplementation("org.mockito", "mockito-inline", "3.7.7")
     testImplementation("org.robolectric", "robolectric", "4.5.1")
     androidTestImplementation("androidx.test.ext", "junit", "1.1.2")
     androidTestImplementation("androidx.test.espresso", "espresso-core", "3.3.0")
