@@ -23,7 +23,6 @@ import android.content.SharedPreferences
 import android.util.AttributeSet
 import androidx.preference.Preference
 import androidx.preference.PreferenceManager
-import com.github.michaelbull.result.onSuccess
 import dev.patrickgold.florisboard.R
 import dev.patrickgold.florisboard.ime.core.PrefHelper
 import dev.patrickgold.florisboard.ime.extension.AssetRef

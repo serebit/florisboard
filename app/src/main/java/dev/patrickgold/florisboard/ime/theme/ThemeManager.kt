@@ -22,7 +22,6 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Color
-import com.github.michaelbull.result.*
 import dev.patrickgold.florisboard.ime.core.PrefHelper
 import dev.patrickgold.florisboard.ime.extension.AssetManager
 import dev.patrickgold.florisboard.ime.extension.AssetRef
@@ -102,7 +101,7 @@ class ThemeManager private constructor(
         activeTheme = AdaptiveThemeOverlay(this, if (ref == null) {
             Theme.BASE_THEME
         } else {
-            loadTheme(ref).getOr(Theme.BASE_THEME)
+            loadTheme(ref).getOrDefault(Theme.BASE_THEME)
         })
         Timber.i(activeTheme.label)
         notifyCallbackReceivers()
@@ -247,22 +246,22 @@ class ThemeManager private constructor(
         }
     }
 
-    fun deleteTheme(ref: AssetRef): Result<Nothing?, Throwable> {
+    fun deleteTheme(ref: AssetRef): Result<Nothing?> {
         return assetManager.deleteAsset(ref)
     }
 
-    fun loadTheme(ref: AssetRef): Result<Theme, Throwable> {
+    fun loadTheme(ref: AssetRef): Result<Theme> {
         assetManager.loadAsset(ref, ThemeJson::class.java).onSuccess { themeJson ->
             val theme = themeJson.toTheme()
-            return Ok(theme)
+            return Result.success(theme)
         }.onFailure {
             Timber.e(it.toString())
-            return Err(it)
+            return Result.failure(it)
         }
-        return Err(Exception("Unreachable code"))
+        return Result.failure(Exception("Unreachable code"))
     }
 
-    fun writeTheme(ref: AssetRef, theme: Theme): Result<Boolean, Throwable> {
+    fun writeTheme(ref: AssetRef, theme: Theme): Result<Boolean> {
         return assetManager.writeAsset(ref, ThemeJson::class.java, ThemeJson.fromTheme(theme))
     }
 
@@ -300,7 +299,7 @@ class ThemeManager private constructor(
                     prefs.theme.dayThemeRef
                 }
             }
-        }).onFailure { Timber.e(it) }.getOr(null)
+        }).onFailure { Timber.e(it) }.getOrDefault(null)
     }
 
     private fun indexThemeRefs() {
